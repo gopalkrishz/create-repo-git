@@ -1,0 +1,3112 @@
+//embed 123456//////////////////
+Embed 1 2 3 4 5 6 7
+
+#include<pic.h>
+void delay(unsigned int);
+void main(){
+	TRISB5=0;
+	RB5=0;
+	for(;;){
+		RB5=~RB5;
+		delay(1000);
+	}
+}
+void delay(unsigned int time){
+	for(int i=0;i<time;i++)
+		for(int j=0;j<165;j++);
+}
+
+
+
+#include<pic.h>
+void delay(unsigned int);
+void main(){
+	TRISC=0;
+	PORTC=0;
+	int i=0;
+	for(;;){
+		i=(i+1)%111;
+		PORTC=i;
+		delay(1000);
+	}
+}
+void delay(unsigned int time){
+	for(int i=0;i<time;i++)
+		for(int j=0;j<165;j++);
+}
+
+
+
+
+#include<pic.h>
+void delay(unsigned int);
+void main(){
+	TRISB0=1;
+	TRISD0=0;
+	for(;;){
+		RD0=RB0;
+		delay(1000);
+	}
+}
+void delay(unsigned int time){
+	for(int i=0;i<time;i++)
+		for(int j=0;j<165;j++);
+}
+
+
+#include<pic.h>
+void delay(unsigned int);
+void main(){
+	int arr[]={0x3F,0x06,0x5B,0x4F,0x66,0x6D,0x7D,0x07,0x7F,0x6F};
+	TRISC=0;
+	PORTC=0;
+	for(int i=0;i<10;i++){
+		PORTC=arr[i];
+		delay(1000);
+	}
+}
+void delay(unsigned int time){
+	for(int i=0;i<time;i++)
+		for(int j=0;j<165;j++);
+}
+
+
+Ex 2 3
+
+2.1
+#include<pic.h>
+void main(){
+        TRISD4=0;
+        RD4=0;
+        for(;;){
+                RD4=~RD4;
+                delay();
+        }
+}
+void delay(){
+        T0CON=0x00;
+        TMR0L=0x5E;
+        TMR0H=0xFE;
+        TMR0ON=1;
+        while(TMR0IF==0);
+        TMR0ON=0;
+        TMR0IF=0;
+}
+
+2.2
+#include<pic.h>
+void main(){
+        TRISB=0;
+        PORTB=0x55;
+        for(;;){
+                PORTB=~PORTB;
+                delay();
+        }
+}
+void delay(){
+        for(int i=0;i<38;i++){
+        T1CON=0x00;
+        TMR0L=0x00;
+        TMR0H=0x00;
+        TMR1ON=1;
+        while(TMR1IF==0);
+        TMR1ON=0;
+        TMR1IF=0;
+        }
+}
+
+2.3
+#include<pic.h>
+void main(){
+        TRDISB=0;
+        RB0=0;
+        for(;;){
+                RB0=~RB0;
+                delay();
+        }
+}
+void delay(){
+        T0CON=0x00;
+        TMR2=0x83;
+        TMR2ON=1;
+        while(TMR2IF==0);
+        TMR2ON=0;
+        TMR2IF=0;
+}
+
+2.4
+#include<pic.h>
+void main(){
+        TRISC=0;
+        PORTC=0;
+        for(;;){
+                PORTC=0;
+                delay();
+                RC1=0;
+                delay();
+                RC0=0;
+                RC1=1;
+                delay();
+                RC1=0;
+                RC2=1;
+                delay();
+                RC2=0;
+                RC3=1;
+                delay();
+                RC3=0;
+                RC4=1;
+                delay();
+                RC4=0;
+                RC5=1;
+                delay();
+                RC5=0;
+                RC6=1;
+                delay();
+                RC6=0;
+                RC7=1;
+                delay();
+        }
+}
+void delay(){
+        T3CON=0x00;
+        TMR3L=0xFE;
+        TMR3H=0x5E;
+        TMR3ON=1;
+        while(TMR3IF==0);
+        TMR3ON=0;
+        TMR3IF=0;
+}
+
+
+3.1
+
+#include<pic.h>
+#define ldata PORTD
+#define rs RB0
+#define rw RB1
+#define en RB2
+void main(){
+        TRISD=0;
+        TRISB=0;
+        en=0;
+        MSDelay(250);
+        lcdcmd(0x38);
+        MSDelay(250);
+        lcdcmd(0x0E);
+        MSDelay(15);
+        lcdcmd(0x01);
+        MSDelay(15);
+        lcdcmd(0x06);
+        MSDelay(15);
+        lcdcmd(0x86);
+        MSDelay(15);
+        char[] s={'*','C','o','d','i','n','g',' ','i','s',' ','f','u','n'};
+        for(int i=0;i<s.length;i++){
+                lcddata(s[i]);
+                MSDelay(15);
+        }
+}
+void MSDelay(int time){
+        for(int i=0;i<time;i++){
+                for(int j=0;j<15;j++);
+        }
+}
+void lcdcmd(char val){
+        ldata=val;
+        rs=0;
+        rw=0;
+        en=1;
+        MSDelay(1);
+        en=0;
+}
+void lcddata(char val){
+        ldata=val;
+        rs=1;
+        rw=0;
+        en=1;
+        MSDelay(1);
+        en=0;
+}
+
+
+3.2
+
+#include<pic.h>
+#define ldata PORTD
+#define rs RB0
+#define rw RB1
+#define en RB2
+#define busy RD7
+void main(){
+        TRISD=0;
+        TRISB=0;
+        en=0;
+        MSDelay(250);
+        lcdcmd(0x38);
+        MSDelay(250);
+        lcdcmd(0x0E);
+        lcdready();
+        lcdcmd(0x01);
+        lcdready();
+        lcdcmd(0x06);
+        lcdready();
+        lcdcmd(0x86);
+        lcdready();
+        char[] s={'*','A','L','L',' ','T','H','E',' ','B','E','S','T'};
+        for(int i=0;i<s.length;i++){
+                lcddata(s[i]);
+                lcdready();
+        }
+}
+void MSDelay(int time){
+        for(int i=0;i<time;i++){
+                for(int j=0;j<15;j++);
+        }
+}
+void lcdcmd(char val){
+        ldata=val;
+        rs=0;
+        rw=0;
+        en=1;
+        MSDelay(1);
+        en=0;
+}
+void lcddata(char val){
+        ldata=val;
+        rs=1;
+        rw=0;
+        en=1;
+        MSDelay(1);
+        en=0;
+}
+void lcdready(){
+        TRISD=0xFF;
+        rs=0;
+        rw=1;
+        do{
+                en=1;
+                MSDelay(1);
+                en=0;
+        }while(busy==1);
+        TRISD=0x00;
+}
+
+EKA OP
+
+https://filetransfer.io/data-package/siZyirTR#link
+
+
+    implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.8.0"))
+
+
+https://console.firebase.google.com/u/0/project/_/overview?forceCheckTos=true&localPort=50506&packageName=com.example.farming&projectDisplayName=FARMING&dlAction=AndroidStudioConnectApp
+
+
+https://console.firebase.google.com/u/0/project/_/overview?forceCheckTos=true&localPort=51068&packageName=com.example.farming&projectDisplayName=FARMING&dlAction=AndroidStudioConnectApp
+
+
+https://console.firebase.google.com/u/0/project/_/overview?forceCheckTos=true&localPort=51205&packageName=com.example.farming&projectDisplayName=FARMING&dlAction=AndroidStudioConnectApp
+
+
+// MY SQL CONNECTION...
+
+Type the following command to compile the example program:
+javac MySQLConnectExample.java
+
+Suppose the Connect/J library is placed in the same directory as the MySQLConnectExample.java file. Type the following command to run:
+java -cp mysql-connector-java-5.1.21-bin.jar;. MySQLConnectExample
+
+
+http://exploreembedded.com/wiki/PIC16f877a_Timer
+
+
+
+
+
+//
+pic16f877a program to generate a square wave of 3khz in timer0
+
+#include <pic16f877a.h>
+
+void main()
+{
+    T0CS = 0; // Timer0 clock source set to internal instruction cycle
+    PSA = 0; // Prescaler is assigned to Timer0 module
+    PS2 = 0; // Prescaler set to 1:2
+    PS1 = 0;
+    PS0 = 0;
+
+    TRISC.RC2 = 0; // Set RC2 as output
+
+    while(1)
+    {
+        TMR0 = 131; // Load Timer0 with 131 to get a 3kHz frequency
+        T0IF = 0; // Timer0 interrupt flag bit set to 0
+
+        RC2 = 1; // Set RC2 to high
+        while(!T0IF); // Wait for Timer0 interrupt flag to be set
+        RC2 = 0; // Set RC2 to low
+    }
+}
+
+
+
+
+//
+pic16f877a program to generate a 1 second delay  in timer1
+
+
+#include <pic16f877a.h>
+
+void main()
+{
+    TMR1CS = 0;     // Set Timer1 clock source to internal clock
+    T1CKPS0 = 1;    // Set Timer1 prescaler to 1:8
+    T1CKPS1 = 1;
+    TMR1H = 0x0B;   // Set Timer1 high byte for 1 second delay
+    TMR1L = 0xDC;   // Set Timer1 low byte for 1 second delay
+    TMR1IF = 0;     // Clear Timer1 interrupt flag
+    TMR1ON = 1;     // Turn on Timer1
+    
+    // Wait for Timer1 to overflow and generate interrupt
+    while (!TMR1IF);
+    
+    TMR1IF = 0;     // Clear Timer1 interrupt flag
+    TMR1ON = 0;     // Turn off Timer1
+}
+
+
+
+#include<xc.h>
+
+void main()
+{
+  T1CON = 0x10; // Timer 1 in 16-bit mode with prescaler 1:1
+  TMR1 = 0x85EE; // Reload value for 1 second delay
+  T1CONbits.TMR1ON = 1; // Turn on timer 1 
+
+  while(TMR1IF==0); // Wait for timer 1 interrupt flag to set
+  TMR1IF = 0; // Clear timer 1 interrupt flag
+  T1CONbits.TMR1ON = 0; // Turn off timer 1
+}
+
+
+
+
+//
+in pic16f877a what value should be loaded to get the 1sec delay in timer2
+
+
+#include <xc.h>
+#define _XTAL_FREQ 4000000
+
+void main(){
+    // Initialize Timer2
+    T2CON = 0x00;
+    T2CONbits.T2CKPS = 0b11;        // Prescaler 1:16
+    PR2 = 124;                      // Load PR2 register for 1 second delay at 4MHz clock
+    TMR2 = 0x00;                    // Clear Timer2
+    T2CONbits.TMR2ON = 1;           // Turn on Timer2
+
+    // Main Loop
+    while(1){
+        // Perform tasks during 1 second delay
+        // ...
+
+        // Wait for next 1 second delay
+        while(!PIR1bits.TMR2IF);    // Wait for Timer2 overflow flag to set
+        TMR2 = 0x00;                // Clear Timer2
+        PIR1bits.TMR2IF = 0;        // Clear Timer2 overflow flag
+    }
+}
+
+
+
+//
+
+
+https://ssaik.blogspot.com/2016/03/vowel-and-consonant-map-reduce-program.html
+
+//embedded 3 lab
+
+#include<pic.h>
+#define Idata PORTD
+#define rs RB0
+#define rw RB1
+#define en RB2
+void delay(unsigned int time)
+{
+unsigned int i,j;
+for(i=0;i<time;i++)
+{
+for(j=0;j<165;j++)
+{}
+}
+}
+void lcdcmd(unsigned char value)
+{
+Idata = value;
+rs = 0;
+rw =0;
+en =1;
+delay(1);
+en =0;
+}
+
+void lcddata(unsigned char value)
+{
+Idata = value;
+rs = 1;
+rw =0;
+en =1;
+delay(1);
+en =0;
+}
+void main(void)
+{
+unsigned  int i;
+char arr[] = {'C','O','D','I','N','G','I','S','F','U','N'};
+TRISD =0;
+TRISB =0;
+en =0;
+delay(250);
+lcdcmd(0x38);
+delay(250);
+lcdcmd(0x0E);
+delay(250);
+lcdcmd(0x01);
+delay(15);
+lcdcmd(0x06);
+delay(15);
+lcdcmd(0x80);
+delay(15);
+for(i=0;i<15;i++)
+{
+lcddata(arr[i]);
+delay(15);
+}
+}
+
+
+
+exercise 2
+
+#include<pic.h>
+#define Idata PORTD
+#define rs RB0
+#define rw RB1
+#define en RB2
+#define busy RB7
+void delay(unsigned int time)
+{
+unsigned int i,j;
+for(i=0;i<time;i++)
+{
+for(j=0;j<165;j++)
+{}
+}
+}
+void lcdready()
+{
+TRISD=0xFF;
+rs=0;
+rw=1;
+do{
+en=1;
+delay(1);
+en=0;
+}while(busy==0);
+TRISD=0x00;
+}
+void lcdcmd(unsigned char value)
+{
+Idata = value;
+rs = 0;
+rw =0;
+en =1;
+delay(1);
+en =0;
+}
+
+void lcddata(unsigned char value)
+{
+Idata = value;
+rs = 1;
+rw =0;
+en =1;
+delay(1);
+en =0;
+}
+void main(void)
+{
+unsigned  int i;
+char arr[] = {'*','A','L','L','T','H','E','B','E','S','T','*'};
+TRISD =0;
+TRISB =0;
+en =0;
+delay(250);
+lcdcmd(0x38);
+delay(250);
+lcdcmd(0x0E);
+delay(250);
+lcdcmd(0x01);
+lcdready();
+lcdcmd(0x06);
+lcdready();
+lcdcmd(0x80);
+lcdready();
+for(i=0;i<15;i++)
+{
+lcddata(arr[i]);
+lcdready();
+}
+}
+
+
+
+Ex2
+
+2.3
+#include<pic.h>
+void main(){
+        TRISB0=0;
+        RB0=0;
+        for(;;){
+                RB0=~RB0;
+                delay();
+        }
+}
+void delay(){
+        T2CON=0x00;
+		TMR2H=0x00;
+        TMR2L=0x83;
+        TMR2ON=1;
+        while(TMR2IF==0);
+        TMR2ON=0;
+        TMR2IF=0;
+} 
+
+
+#include<pic.h>
+void main(){
+        TRISC=0;
+        PORTC=0;
+        for(;;){
+                PORTC=0;
+                delay();
+                RC1=0;
+                delay();
+                RC0=0;
+                RC1=1;
+                delay();
+                RC1=0;
+                RC2=1;
+                delay();
+                RC2=0;
+                RC3=1;
+                delay();
+                RC3=0;
+                RC4=1;
+                delay();
+                RC4=0;
+                RC5=1;
+                delay();
+                RC5=0;
+                RC6=1;
+                delay();
+                RC6=0;
+                RC7=1;
+                delay();
+				RC7=0;
+                RC0=1;
+				delay();
+        }
+}
+void delay(){
+        T1CON=0x00;
+		TMR1H=0x00;
+        TMR1L=0x00;
+        TMR1ON=1;
+        while(TMR1IF==0);
+        TMR1ON=0;
+        TMR1IF=0;
+}
+
+
+#include<pic.h>
+void delay(unsigned int);
+void main(){
+	int arr[]={0x3F,0x06,0x5B,0x4F,0x66,0x6D,0x7D,0x07,0x7F,0x6F,0x45};
+	TRISC=0;
+	PORTC=0;
+	for(int i=0;i<10;i++){
+		PORTC=arr[i];
+		delay(1000);
+	}
+}
+void delay(unsigned int time){
+	for(int i=0;i<time;i++)
+		for(int j=0;j<165;j++);
+}
+
+ ex2 5
+
+
+#include <xc.h>
+
+// Define the ADC channels
+#define ADC_CHANNEL_TEMPERATURE RA0
+
+// Define the LCD pins
+#define LCD_RS PORTBbits.RB0
+#define LCD_EN PORTBbits.RB1
+#define LCD_D4 PORTBbits.RB2
+#define LCD_D5 PORTBbits.RB3
+#define LCD_D6 PORTBbits.RB4
+#define LCD_D7 PORTBbits.RB5
+
+// Initialize the ADC
+void initADC() {
+  ADCON0bits.ADON = 1; // Enable the ADC
+  ADCON0bits.CHS = 0; // Select ADC channel 0
+}
+
+// Read the temperature from the sensor
+int readTemperature() {
+  int temperature;
+
+  // Start the ADC conversion
+  ADCON0bits.GO = 1;
+
+  // Wait for the conversion to complete
+  while (ADCON0bits.GO);
+
+  // Get the temperature reading
+  temperature = ((ADRESH << 8) | ADRESL);
+
+  // Convert the temperature to Celsius
+  temperature = temperature * 0.5;
+
+  return temperature;
+}
+
+// Initialize the LCD
+void initLCD() {
+  // Set the LCD pins as outputs
+  TRISBbits.TRISB0 = 0;
+  TRISBbits.TRISB1 = 0;
+  TRISBbits.TRISB2 = 0;
+  TRISBbits.TRISB3 = 0;
+  TRISBbits.TRISB4 = 0;
+  TRISBbits.TRISB5 = 0;
+
+  // Send the initialization sequence to the LCD
+  lcd_write_command(0x38); // 2 lines, 8 characters per line
+  lcd_write_command(0x0C); // Display on, cursor off
+  lcd_write_command(0x06); // Increment cursor, no display shift
+}
+
+// Write a character to the LCD
+void lcd_write_character(char c) {
+  // Send the character to the LCD
+  PORTB = (PORTB & 0xF0) | c;
+  LCD_RS = 1;
+  LCD_EN = 1;
+  __delay_ms(1);
+  LCD_EN = 0;
+
+  // Wait for the LCD to finish writing the character
+  while (LCD_RS);
+}
+
+// Write a command to the LCD
+void lcd_write_command(char c) {
+  // Send the command to the LCD
+  PORTB = (PORTB & 0xF0) | c;
+  LCD_RS = 0;
+  LCD_EN = 1;
+  __delay_ms(1);
+  LCD_EN = 0;
+
+  // Wait for the LCD to finish writing the command
+  while (LCD_RS);
+}
+
+// Clear the LCD
+void lcd_clear() {
+  lcd_write_command(0x01);
+}
+
+// Move the cursor to the specified row and column
+void lcd_set_cursor(int row, int column) {
+  char command;
+
+  // Calculate the command
+  command = (row == 1) ? 0x80 : 0xC0;
+  command |= column;
+
+  // Send the command to the LCD
+  lcd_write_command(command);
+}
+
+int main() {
+  // Initialize the ADC and LCD
+  initADC();
+  initLCD();
+
+  // Clear the LCD
+  lcd_clear();
+
+  // Display the temperature
+  lcd_set_cursor(1, 0);
+  lcd_write_string("Temperature: ");
+  lcd_write_integer(readTemperature(), 2);
+
+  // Infinite loop
+  while (1);
+
+  return 0;
+}
+
+
+#include<pic.h>
+#define LED PORTB
+void delay(unsigned int);
+void main(){
+        TRISB5=0;
+        RB5=0;
+        for(;;){
+                RB5=~RB5;
+                delay(1000);
+        }
+}
+void delay(unsigned int time){
+        for(int i=0;i<time;i++)
+                for(int j=0;j<165;j++);
+}
+
+
+#include<pic.h>
+void delay(unsigned int);
+void main(){
+        TRISC=0;
+        PORTC=0;
+        int i=0;
+        for(;;){
+                i=(i+1)%111;
+                PORTC=i;
+                delay(1000);
+        }
+}
+void delay(unsigned int time){
+        for(int i=0;i<time;i++)
+                for(int j=0;j<165;j++);
+}
+
+
+#include<pic.h>
+void delay(unsigned int);
+void main(){
+        TRISB0=1;
+        TRISD0=0;
+        for(;;){
+                delay(1000);
+                RD0=RB0;
+        }
+}
+void delay(unsigned int time){
+        for(int i=0;i<time;i++)
+                for(int j=0;j<165;j++);
+}
+
+
+
+#include<pic.h>
+void delay(unsigned int);
+void main(){
+        int arr[]={0x3F,0x06,0x5B,0x4F,0x66,0x6D,0x7D,0x07,0x7F,0x6F,0x45,0x77,0x7C,0x39,0x3F,0x79,0x71};
+        TRISC=0;
+        PORTC=0;
+        for(int i=0;i<10;i++){
+                PORTC=arr[i];
+                delay(1000);
+        }
+}
+void delay(unsigned int time){
+        for(int i=0;i<time;i++)
+                for(int j=0;j<165;j++);
+}
+
+
+ex4....
+
+#include<pic.h>
+#define myPB4 RB4
+void RB_ISR();
+#pragma interrupt chk_isr
+void check_isr(){
+	if(RBIF==1)
+	RB_ISR();
+	}
+#pragma code Hipriority_int=0x08
+void Hipriority_Int(){
+	_asm
+		GOTO check_isr
+	_endasm
+}
+void RB_ISR(){
+	RA0=~RA0
+	delay();
+	RBIF=0;
+	}
+void main(){
+	TRISA=0;
+	RA0=0;
+	TRISC=0;
+	TRISD=0;
+	RBIF=0;
+	RBIE=0;
+	PEIE=1;
+	GEIE=1;
+	while(1){
+		PORTD=PORTC;
+		delay();
+		}
+		}
+void delay(){
+	unsigned int i,j;
+	for(i=0;i<1000;i++){
+		for(j=0;j<165;j++){
+			}
+			}}
+
+
+ekaaa
+
+#include<pic.h>
+void delay()
+{
+	T0CON=0;
+	TMR0H=0xFE;
+	TMR0L=0x5E;
+	TMR0ON=1;
+	while(TMR0IF==1);
+	TMR0ON=0;
+TMR0IF=0;
+	
+	}
+	
+	void main()
+	{
+		TRISC5=0;
+		RC5=0;
+		while(1)
+		{
+			RC5=~RC5;
+			delay();
+			}
+			}
+
+
+mathan:
+----------
+
+
+ex1
+
+
+#include<pic.h>
+void delay(unsigned int);
+void main(void){
+TRISB=0;
+RB5=0;
+for(;;){
+RB5=~RB5;
+delay(1000);}}
+void delay(unsigned int time){
+unsigned int i;
+unsigned int j;
+for(i=0;i<time;i++){
+for(j=0;j<165;j++){
+}}}
+
+
+#include<pic.h>
+void delay(unsigned int);
+void main(){
+int arr[]={0x3F,0x06,0x5B,0x4F,0x66,0x6D,0x7D,0x07,0x7F,0x6F,0x77,0x7C,0x39,0x5E,0x79,0x71};
+TRISC=0;
+PORTC=0;
+for(int i=0;i<16;i++){
+PORTC=arr[i];
+delay(1000);
+}
+}
+void delay(unsigned int time){
+for(int i=0;i<time;i++)
+for(int j=0;j<165;j++);
+}
+
+
+
+#include<pic.h>
+void main(){
+TRISB=0;
+TRISD=1;
+for(;;){
+RB0=RD0;
+}}}}
+
+#include<pic.h>
+void main(){
+TRISC=0;
+PORTC=0;
+unsigned int i;
+for(;;){
+i=(i%111);
+i++;
+delay(1000);}}
+void delay(unsigned int time){
+unsigned int i,j;
+for(i=0;i<time;i++){
+for(j=0;j<165;j++){}}}
+
+
+
+
+ex3
+
+
+
+
+#include<pic.h>
+#define Idata PORTD
+#define rs RB0
+#define rw RB1
+#define en RB2
+void delay(unsigned int time)
+{
+unsigned int i,j;
+for(i=0;i<time;i++)
+{
+for(j=0;j<165;j++)
+{}
+}
+}
+void lcdcmd(unsigned char value)
+{
+Idata = value;
+rs = 0;
+rw =0;
+en =1;
+delay(1);
+en =0;
+}
+
+void lcddata(unsigned char value)
+{
+Idata = value;
+rs = 1;
+rw =0;
+en =1;
+delay(1);
+en =0;
+}
+void main(void)
+{
+unsigned  int i;
+char *arr = "CODING\tIS\tFUN";
+TRISD =0;
+TRISB =0;
+en =0;
+delay(250);
+lcdcmd(0x38);
+delay(250);
+lcdcmd(0x0E);
+delay(250);
+lcdcmd(0x01);
+delay(15);
+lcdcmd(0x06);
+delay(15);
+lcdcmd(0x80);
+delay(15);
+for(i=0;i<13;i++)
+{
+lcddata(arr[i]);
+delay(15);
+}
+}
+
+
+
+
+#include<pic.h>
+#define Idata PORTD
+#define rs RB0
+#define rw RB1
+#define en RB2
+#define busy RB7
+void delay(unsigned int time)
+{
+unsigned int i,j;
+for(i=0;i<time;i++)
+{
+for(j=0;j<165;j++)
+{}
+}
+}
+void lcdready()
+{
+TRISD=0xFF;
+rs=0;
+rw=1;
+do{
+en=1;
+delay(1);
+en=0;
+}while(busy==0);
+TRISD=0x00;
+}
+void lcdcmd(unsigned char value)
+{
+Idata = value;
+rs = 0;
+rw =0;
+en =1;
+delay(1);
+en =0;
+}
+
+void lcddata(unsigned char value)
+{
+Idata = value;
+rs = 1;
+rw =0;
+en =1;
+delay(1);
+en =0;
+}
+void main(void)
+{
+unsigned  int i;
+char *arr = "ALL\tTHE\tBEST";
+TRISD =0;
+TRISB =0;
+en =0;
+delay(250);
+lcdcmd(0x38);
+delay(250);
+lcdcmd(0x0E);
+delay(250);
+lcdcmd(0x01);
+lcdready();
+lcdcmd(0x06);
+lcdready();
+lcdcmd(0x80);
+lcdready();
+for(i=0;i<12;i++)
+{
+lcddata(arr[i]);
+lcdready();
+}
+}
+
+
+#include<pic.h>
+
+#define delay  for(i=0; i<= 50000; i++)
+
+#define LED PORTD
+
+unsigned int i;
+
+void interrupt  ISR(void)
+{
+    unsigned char temp_PORTB = PORTB;
+	RA0 = 0;
+	delay;
+	RA0 = 1;
+	delay;
+	RBIF = 0;
+
+}
+
+
+void main(void)
+{
+    /*Port B as a Input */
+    TRISB0=0xFF;
+	TRISA0 = 0;
+    TRISC = 0xFF;
+    /*Port D as a Output */
+    TRISD=0;
+    LED=0;
+
+    /* Register PORTB interrupt */
+    //OPTION_REG |= 0b00000000;
+    INTCON |= 0b10011000;
+    while(1) {
+
+    LED = PORTC;
+    }
+
+
+
+
+#include <pic.h>
+
+// Configuration bits
+#pragma config FOSC = HS      // High-Speed Crystal oscillator
+#pragma config WDTE = OFF     // Watchdog Timer disabled
+#pragma config PWRTE = OFF    // Power-up Timer disabled
+#pragma config BOREN = OFF    // Brown-out Reset disabled
+#pragma config LVP = OFF      // Low-Voltage Programming disabled
+
+// Function prototypes
+void setup(void);
+
+// Interrupt service routine for Timer1 overflow
+void interrupt ISR(void) {
+    if (TMR1IF) {
+		TMR1H = 0xFE;
+		TMR1L = 0x5E;		
+        TMR1IF = 0; // Clear Timer1 overflow flag
+        RB7 = !RB7; // Toggle RB4 pin
+    }
+}
+
+void main(void) {
+    setup(); // Initialize PIC and Timer1
+	TRISD = 0x00;
+	TRISC =0xFF;
+    while (1) {
+        PORTD =  PORTC;
+    }
+}
+
+void setup(void) {
+	
+    TRISB7 = 0;   // Set RB4 as output
+    // Configure Timer1
+   /* TMR1CS = 0;   // Timer1 clock source: internal instruction cycle clock (Fosc/4)
+    T1CKPS0 = 1;  // Timer1 prescaler: 1:8
+    T1CKPS1 = 1; */
+	// Timer1 prescaler: 1:8
+    T1CKPS0 = 0;  // Timer1 prescaler: 1:8
+    T1CKPS1 = 0;  // Timer1 prescaler: 1:8
+    TMR1CS = 0;   // Timer1 clock source: internal instruction cycle clock (Fosc/4)
+// Enable Timer1
+	TMR1H =  0xFE;
+	TMR1L =  0x5E;
+	TMR1ON = 1;   
+    // Configure interrupts
+    PEIE = 1;     // Enable Peripheral Interrupts
+    GIE = 1;      // Enable Global Interrupts
+    TMR1IE = 1;   // Enable Timer1 overflow interrupt
+}
+
+}
+
+
+embed 4
+
+#include<pic.h>
+
+#define delay  for(i=0; i<= 50000; i++)
+
+#define LED PORTD
+
+unsigned int i;
+
+void interrupt  ISR(void)
+{
+    unsigned char temp_PORTB = PORTB;
+	RA0 = 0;
+	delay;
+	RA0 = 1;
+	delay;
+	RBIF = 0;
+
+}
+
+
+void main(void)
+{
+    TRISB0=1;
+	TRISA0 = 0;
+    TRISC = 0xFF;
+    TRISD=0x00;
+    LED=0;
+    INTCON |= 0b10011000;
+    while(1) {
+
+    LED = PORTC;
+    }
+}
+
+
+
+     #include <pic.h>
+
+void setup(void);
+void interrupt ISR(void) {
+  if (TMR1IF) {
+                TMR1H = 0xFE;
+                TMR1L = 0x5E;
+        TMR1IF = 0;
+        RB7 = !RB7;
+    }
+}
+
+void setup(void) {
+
+    TRISB7 = 0;
+    T1CKPS0 = 0;
+    T1CKPS1 = 0;
+    TMR1CS = 0;
+        TMR1H =  0xFE;
+        TMR1L =  0x5E;
+        TMR1ON = 1;
+    PEIE = 1;
+    GIE = 1;
+    TMR1IE = 1;
+}
+void main(void) {
+    setup();
+        TRISD = 0x00;
+        TRISC =0xFF;
+    while (1) {
+        PORTD =  PORTC;
+    }
+}
+
+
+embed 5th
+
+#include<pic.h>
+void main(void)
+{
+	unsigned char lbyte,hbyte,bin_temp;
+	TRISD=0;
+	TRISA0=1;
+	TRISA3=1;
+	ADCON0=0x81;
+	ADCON1=0xc5;
+	while(1)
+	{
+		GODONE=1;
+		while(GODONE==1);
+		lbyte = ADRESL;
+		hbyte=ADRESH;
+		lbyte>>=2;
+		lbyte&=0x3F;
+		hbyte<<=6;
+		hbyte&=0xC0;
+		bin_temp = lbyte|hbyte;
+		PORTD=bin_temp;
+	}
+}
+
+
+#include<pic.h>
+#define Idata PORTD
+#define rs RB0
+#define rw RB1
+#define en RB2
+void delay(unsigned int time)
+{
+unsigned int i,j;
+for(i=0;i<time;i++)
+{
+for(j=0;j<165;j++)
+{}
+}
+}
+void lcdcmd(unsigned char value)
+{
+Idata = value;
+rs = 0;
+rw =0;
+en =1;
+delay(1);
+en =0;
+}
+
+void lcddata(unsigned char value)
+{
+Idata = value;
+rs = 1;
+rw =0;
+en =1;
+delay(1);
+en =0;
+}
+void main(void)
+{
+unsigned  int i;unsigned char lbyte,hbyte,bin_temp,bin_t;
+
+TRISD =0;
+TRISB =0;
+en =0;char arr[]="TEMPERATURE:\t\tC";
+delay(250);
+lcdcmd(0x38);
+delay(250);
+lcdcmd(0x0E);
+delay(250);
+lcdcmd(0x01);
+delay(15);
+lcdcmd(0x06);
+delay(15);
+lcdcmd(0x80);
+delay(15);
+for(i=0;i<15;i++)
+{
+lcddata(arr[i]);
+delay(15);
+}
+TRISA0=1;
+	TRISA3=1;
+	ADCON0=0x81;
+	ADCON1=0xc5;
+delay(1);char a[] = {'0','1','2','3','4','5','6','7','8','9'};
+while(1){
+GODONE=1;
+while(GODONE==1);
+lbyte = ADRESL;
+		hbyte=ADRESH;
+		lbyte>>=2;
+		lbyte&=0x3F;
+		hbyte<<=6;
+		hbyte&=0xC0;
+		bin_temp = lbyte|hbyte;
+		bin_t=bin_temp;lcdcmd(0x8C);
+		lcddata(a[bin_t/10]);
+		lcddata(a[bin_temp%10]);lcdcmd(0x8C);
+delay(15);
+}
+}
+
+
+
+#include<pic.h>
+void main(void)
+{
+	unsigned char lbyte,hbyte,bin_temp;
+	TRISD=0;
+	TRISA0=1;
+	TRISA3=1;
+	ADCON0=0x81;
+	ADCON1=0xc5;
+	while(1)
+	{
+		GODONE=1;
+		while(GODONE==1);
+		lbyte = ADRESL;
+		hbyte=ADRESH;
+		lbyte>>=2;
+		lbyte&=0x3F;
+		hbyte<<=6;
+		hbyte&=0xC0;
+		bin_temp = lbyte|hbyte;
+		PORTD(bin_temp);
+	}
+}
+
+
+
+EX 6_embed
+
+
+#include<pic.h>
+void main()
+{
+    TRISC6  = 0;
+    TRISB = 0xFF;
+    SPBRG = 0x20;
+    TXEN = 1;
+    SPEN = 1;
+    while(1)
+    {
+        TXREG = PORTB;
+        while(TXIF==0);
+    }
+}
+
+
+
+
+
+#include<pic.h>
+void main()
+{
+    RCSTA = 0x90;
+    TRISC7 = 1;
+    TRISB = 0x00;
+    TXEN = 1;
+    SPEN = 1;
+    while(1)
+    {
+        while(RCIF == 0);
+        PORTB = RCREG;
+    }
+}
+
+
+#include<pic.h>
+void delay(unsigned int time)
+{
+unsigned int i,j;
+for(i=0;i<time;i++)
+{
+for(j=0;j<165;j++)
+{}
+}
+}
+void main(){
+	TRISD=0xFF;	
+	TXSTA=0x20;
+	TRISC6=0;
+	SPBRG=15;
+	SPEN=1;delay(1000);
+	char namer[]="ASHWATH";int i=0;
+	while(i<7){
+		TXREG=namer[i];
+		while(TXIF==0);
+		delay(30);
+		i+=1;
+	
+	}
+}
+
+
+
+#include<pic.h>
+#define Idata PORTD
+#define rs RB0
+#define rw RB1
+#define en RB2
+void delay(unsigned int time)
+{
+unsigned int i,j;
+for(i=0;i<time;i++)
+{
+for(j=0;j<165;j++)
+{}
+}
+}
+void lcdcmd(unsigned char value)
+{
+Idata = value;
+rs = 0;
+rw =0;
+en =1;
+delay(1);
+en =0;
+}
+
+void lcddata(unsigned char value)
+{
+Idata = value;
+rs = 1;
+rw =0;
+en =1;
+delay(1);
+en =0;
+}
+void main(void)
+{
+TRISD =0;
+TRISB =0;
+en =0;
+delay(250);
+lcdcmd(0x38);
+delay(250);
+lcdcmd(0x0E);
+delay(250);
+lcdcmd(0x01);
+delay(15);
+lcdcmd(0x06);
+delay(15);
+lcdcmd(0x80);
+delay(15);
+	TRISD=0x00;
+	TXSTA=0x00;
+	RCSTA=0x90;
+	TRISC7=1;
+	SPBRG=15;
+	PORTD=0x00;
+	lcdcmd(0x80);
+	delay(15);
+	while(1){
+		while(RCIF==0);
+		lcddata(RCREG);
+		delay(30);
+	}
+}
+
+
+ex7
+
+#include<pic.h>
+void delay(unsigned int time)
+{
+    for(unsigned int i=0;i<time;i++)
+    {
+        for(char j=0;j<165;j++);
+    }
+}
+void Display(unsigned char Bin_Temp)
+{
+	int a[] = {0x3F,0x06,0x5B,0x4F,0x66,0x6D,0x7D,0x07,0x7F,0x6F,0x77,0x7C,0x39,0x5E,0x79,0x71};
+	PORTC = a[Bin_Temp%10];
+	PORTB = a[Bin_Temp/10];
+	delay(1000);
+}
+void main()
+{
+    unsigned char L_Byte,H_Byte,Bin_Temp;
+    TRISB = 0x00;
+    PORTB = 0x00;
+    TRISC = 0x00;
+    PORTC = 0x00;
+
+    TRISA0 = 1;
+    TRISA3 = 1;
+
+    ADCON0 = 0x81;
+    ADCON1 = 0xC5;
+    while(1)
+    {
+        GODONE = 1;
+        delay(500);
+        while(GODONE == 1);
+        L_Byte = ADRESL;
+        H_Byte = ADRESH;
+        L_Byte >>= 2;
+        L_Byte &= 0x3F;
+        H_Byte <<= 6;
+        H_Byte &= 0xC0;
+        Bin_Temp = L_Byte|H_Byte;
+        Display(Bin_Temp);
+    }
+}
+
+
+
+
+
+
+//6_1
+#include<pic.h>
+void main(){
+	TRISD=0xFF;	
+	TXSTA=0x20;
+	TRISC6=0;
+	SPBRG=15;
+	SPEN=1;
+	while(1){
+		TXREG=PORTD;
+		while(TXIF==0);
+	}
+}
+
+
+
+
+
+//6_2
+#include<pic.h>
+void main(){
+	TRISD=0x00;
+	TXSTA=0x00;
+	RCSTA=0x90;
+	TRISC7=1;
+	SPBRG=15;
+	PORTD=0x00;
+	while(1){
+		while(RCIF==0);
+		PORTD=RCREG;
+	}
+}
+
+
+embed 7
+#include<pic.h>
+#define SW RB0
+#define ENABLE RD0
+#define MTR_1 RD1
+#define MTR_2 RD2
+void delay(int time){
+        for(int i=0;i<time;i++){
+                for(int j=0;j<165;j++);
+        }
+}
+void main(){
+        TRISB0=1;
+        TRISD=0x00;
+        PORTD=0x00;
+        SW=1;
+        while(1){
+                ENABLE=1;
+                if(SW==1){
+                        MTR_1=0;
+                        delay(25);
+                        MTR_2=1;
+                        delay(75);
+                }
+                else{
+                        MTR_1=1;
+                        delay(50);
+                        MTR_2=0;
+                        delay(50);
+                }
+        }
+}
+
+#include<pic.h>
+void delay(int time){
+        for(int i=0;i<time;i++){
+                for(int j=0;j<165;j++);
+        }
+}
+void main(){
+        TRISD=0x80;
+        TRISB=0x00;
+        PORTB=0x00;
+        int i=0;
+        while(1){
+                if(i%3==0){
+                RB0=1;
+                RB3=0;
+                delay(100);
+                RB2=1;
+                RB0=0;
+                delay(100);
+                RB1=1;
+                RB2=0;
+                delay(100);
+                RB3=1;
+                RB1=0;
+                delay(100);
+                RB0=1;
+                RB3=0;
+                delay(100);
+                }
+                else{
+                RB0=0;
+                RB3=1;
+                delay(100);
+                RB1=1;
+                RB3=0;
+                delay(100);
+                RB2=1;
+                RB1=0;
+                delay(100);
+                RB0=1;
+                RB2=0;
+                delay(100);
+                }
+                i+=1;
+        }
+}
+
+#include<pic.h>
+void delay(int time){
+        for(int i=0;i<time;i++){
+                for(int j=0;j<165;j++);
+        }
+}
+void main(){
+        TRISD=0x80;
+        TRISB=0x00;
+        PORTB=0x00;
+        TRISC0=1;
+        int t=100;
+        TRISC1=1;
+        while(1){
+                if(RC1==1)
+                        t=20;
+                else
+                        t=10;
+                if(RC0==1){
+                RB0=1;
+                RB3=0;
+                delay(t);
+                RB2=1;
+                RB0=0;
+                delay(t);
+                RB1=1;
+                RB2=0;
+                delay(t);
+                RB3=1;
+                RB1=0;
+                delay(t);
+                RB0=1;
+                RB3=0;
+                delay(t);
+                }
+                else{
+                RB0=0;
+                RB3=1;
+                delay(t);
+                RB1=1;
+                RB3=0;
+                delay(t);
+                RB2=1;
+                RB1=0;
+                delay(t);
+                RB0=1;
+                RB2=0;
+                delay(t);
+                }
+        }
+}
+
+embed ex9 dht11
+
+#include <DHT.h>
+
+// Set DHT pin:
+#define DHTPIN 3
+
+// Set DHT type, uncomment whatever type you're using!
+#define DHTTYPE DHT11   // DHT 11 
+//#define DHTTYPE DHT22   // DHT 22  (AM2302)
+//#define DHTTYPE DHT21   // DHT 21 (AM2301)
+
+// Initialize DHT sensor for normal 16mhz Arduino:
+DHT dht = DHT(DHTPIN, DHTTYPE);
+
+void setup() {
+  // Begin serial communication at a baud rate of 9600:
+  Serial.begin(9600);
+
+  // Setup sensor:
+  dht.begin();
+}
+
+void loop() {
+  // Wait a few seconds between measurements:
+  delay(2000);
+
+  // Reading temperature or humidity takes about 250 milliseconds!
+  // Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)
+
+  // Read the humidity in %:
+  float h = dht.readHumidity();
+  // Read the temperature as Celsius:
+  float t = dht.readTemperature();
+  // Read the temperature as Fahrenheit:
+  float f = dht.readTemperature(true);
+ 
+
+
+ 
+  Serial.print("Humidity(%RH) :");Serial.println(h);
+  Serial.print("Temperature(C):");Serial.println(t);
+  Serial.print("Temperature(F):");Serial.println(f);
+  Serial.println("--------------------------");
+
+  if (isnan(h) || isnan(t) || isnan(f)) {
+    Serial.println("Failed to read from DHT sensor!");
+    return;
+  }
+}
+
+
+Arduino ultrasonic
+
+/*
+ * Created by ArduinoGetStarted.com
+ *
+ * This example code is in the public domain
+ *
+ * Tutorial page: https://arduinogetstarted.com/tutorials/arduino-ultrasonic-sensor-led
+ */
+
+// constants won't change
+const int TRIG_PIN = 6; // Arduino pin connected to Ultrasonic Sensor's TRIG pin
+const int ECHO_PIN = 7; // Arduino pin connected to Ultrasonic Sensor's ECHO pin
+const int LED_PIN  = 3; // Arduino pin connected to LED's pin
+const int DISTANCE_THRESHOLD = 50; // centimeters
+
+// variables will change:
+float duration_us, distance_cm;
+
+void setup() {
+  Serial.begin (9600);       // initialize serial port
+  pinMode(TRIG_PIN, OUTPUT); // set arduino pin to output mode
+  pinMode(ECHO_PIN, INPUT);  // set arduino pin to input mode
+  pinMode(LED_PIN, OUTPUT);  // set arduino pin to output mode
+}
+
+void loop() {
+  // generate 10-microsecond pulse to TRIG pin
+  digitalWrite(TRIG_PIN, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(TRIG_PIN, LOW);
+
+  // measure duration of pulse from ECHO pin
+  duration_us = pulseIn(ECHO_PIN, HIGH);
+  // calculate the distance
+  distance_cm = 0.017 * duration_us;
+
+  if(distance_cm < DISTANCE_THRESHOLD)
+    digitalWrite(LED_PIN, HIGH); // turn on LED
+  else
+    digitalWrite(LED_PIN, LOW);  // turn off LED
+
+  // print the value to Serial Monitor
+  Serial.print("distance: ");
+  Serial.print(distance_cm);
+  Serial.println(" cm");
+
+  delay(500);
+}
+
+embd 8
+
+qus1
+
+void setup() {
+  // initialize digital pin LED_BUILTIN as an output.
+  pinMode(LED_BUILTIN, OUTPUT);
+}
+
+// the loop function runs over and over again forever
+void loop() {
+  digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
+  delay(1000);                       // wait for a second
+  digitalWrite(LED_BUILTIN, LOW);    // turn the LED off by making the voltage LOW
+  delay(1000);                       // wait for a second
+}
+
+qus 2
+
+int LED=5;
+void setup() {
+  // initialize digital pin LED_BUILTIN as an output.
+  pinMode(LED, OUTPUT);
+}
+
+// the loop function runs over and over again forever
+void loop() {
+  int i=0;
+  for(i=0;i<=255;i++){
+    analogWrite(LED,i);
+    delay(100);
+  }
+  for(i=255;i>=0;i--){
+    analogWrite(LED,i);
+    delay(100);
+  }
+
+}
+
+qus 3
+
+int buz = 7;
+int sw = 12;
+void setup() {
+  // initialize digital pin LED_BUILTIN as an output.
+  pinMode(buz, OUTPUT);
+  pinMode(sw, INPUT);
+}
+
+// the loop function runs over and over again forever
+void loop() {
+    if(digitalRead(sw)==1)
+      digitalWrite(buz,HIGH);
+     else
+      digitalWrite(buz,LOW);
+  }
+
+
+arduino file
+
+
+
+https://www.instructables.com/How-to-Simulate-Arduino-in-Proteus/
+
+
+int trig = 9;    // TRIG pin
+int echo = 8;    // ECHO pin
+float time, d;
+void setup() {
+  Serial.begin (9600);
+  pinMode(trig, OUTPUT);
+  pinMode(echo, INPUT);
+}
+void loop() {
+   digitalWrite(trig, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trig, LOW);
+  time = pulseIn(echo, HIGH);
+  d = 0.017 * time;
+  Serial.print("distance: ");
+  Serial.print(d);
+  Serial.println(" cm");
+  delay(500);
+}
+
+int LED =13;
+
+void setup() {
+    pinMode(LED,OUTPUT);
+
+}
+
+void loop() {
+      digitalWrite(LED,HIGH);
+      delay(1000);
+      digitalWrite(LED,LOW);
+      delay(1000);
+
+
+}
+
+/*
+ * Created by ArduinoGetStarted.com
+ *
+ * This example code is in the public domain
+ *
+ * Tutorial page: https://arduinogetstarted.com/tutorials/arduino-ultrasonic-sensor-led
+ */
+
+// constants won't change
+const int TRIG_PIN = 6; // Arduino pin connected to Ultrasonic Sensor's TRIG pin
+const int ECHO_PIN = 7; // Arduino pin connected to Ultrasonic Sensor's ECHO pin
+const int LED_PIN  = 3; // Arduino pin connected to LED's pin
+const int DISTANCE_THRESHOLD = 50; // centimeters
+
+// variables will change:
+float duration_us, distance_cm;
+
+void setup() {
+  Serial.begin (9600);       // initialize serial port
+  pinMode(TRIG_PIN, OUTPUT); // set arduino pin to output mode
+  pinMode(ECHO_PIN, INPUT);  // set arduino pin to input mode
+  pinMode(LED_PIN, OUTPUT);  // set arduino pin to output mode
+}
+
+void loop() {
+  // generate 10-microsecond pulse to TRIG pin
+  digitalWrite(TRIG_PIN, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(TRIG_PIN, LOW);
+
+  // measure duration of pulse from ECHO pin
+  duration_us = pulseIn(ECHO_PIN, HIGH);
+  // calculate the distance
+  distance_cm = 0.017 * duration_us;
+
+  if(distance_cm < DISTANCE_THRESHOLD)
+    digitalWrite(LED_PIN, HIGH); // turn on LED
+  else
+    digitalWrite(LED_PIN, LOW);  // turn off LED
+
+  // print the value to Serial Monitor
+  Serial.print("distance: ");
+  Serial.print(distance_cm);
+  Serial.println(" cm");
+
+  delay(500);
+}
+
+
+Embed odd ass
+@@@@@@@@@@@@@Indha link la irukura diagrams adhoda assignment ku varayanum
+                       <!---https://filetransfer.io/data-package/UnsBrSES#link----!>
+2nd ass
+
+Designing a soil moisture control system using an Arduino platform and logging the analysis in the cloud typically involves the following components:
+
+Arduino board (e.g., Arduino Uno, Arduino Nano)
+Soil moisture sensor (e.g., FC-28 or similar)
+Relay module (if you want to control a water pump or irrigation system)
+Wi-Fi module (e.g., ESP8266 or ESP32) for connecting to the cloud
+A cloud service for data logging (e.g., ThingSpeak, Firebase, or AWS IoT)
+
+
+#include <Wire.h>
+#include <WiFi.h>
+#include <ThingSpeak.h>
+
+// Replace with your network credentials
+const char* ssid = "YOUR_SSID";
+const char* password = "YOUR_PASSWORD";
+
+// ThingSpeak settings
+unsigned long myChannelNumber = YOUR_CHANNEL_NUMBER;
+const char* myWriteAPIKey = "YOUR_WRITE_API_KEY";
+
+// Define soil moisture sensor pin
+const int soilMoisturePin = A0;
+
+// Interval for reading and sending data (milliseconds)
+const unsigned long postingInterval = 60000; // 1 minute
+
+// Define a variable to store the last time data was sent
+unsigned long lastConnectionTime = 0;
+
+// Initialize WiFi client
+WiFiClient client;
+
+void setup() {
+  Serial.begin(115200);
+  delay(10);
+
+  // Connect to Wi-Fi
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(1000);
+    Serial.println("Connecting to WiFi...");
+  }
+  Serial.println("Connected to WiFi");
+
+  // Initialize ThingSpeak
+  ThingSpeak.begin(client);
+
+  // Set the pin mode for the soil moisture sensor
+  pinMode(soilMoisturePin, INPUT);
+}
+
+void loop() {
+  // Get soil moisture value
+  int soilMoisture = analogRead(soilMoisturePin);
+
+  // Calculate percentage moisture (adjust values as needed)
+  int moisturePercentage = map(soilMoisture, 0, 1023, 0, 100);
+
+  // Print soil moisture value
+  Serial.print("Soil Moisture: ");
+  Serial.print(moisturePercentage);
+  Serial.println("%");
+
+  // Check if it's time to send data to ThingSpeak
+  if (millis() - lastConnectionTime >= postingInterval) {
+    // Save the last connection time
+    lastConnectionTime = millis();
+
+    // Send data to ThingSpeak
+    ThingSpeak.setField(1, moisturePercentage);
+    int response = ThingSpeak.writeFields(myChannelNumber, myWriteAPIKey);
+
+    if (response == 200) {
+      Serial.println("Data sent to ThingSpeak successfully");
+    } else {
+      Serial.println("Error sending data to ThingSpeak. HTTP error code: " + String(response));
+    }
+  }
+
+  // Delay for a while to avoid spamming the server
+  delay(1000);
+}
+
+
+
+
+
+Ass 3
+
+
+ design an application using a PIC16F877A microcontroller to detect the intensity of light using a suitable light sensor (like a LDR - Light Dependent Resistor) and trigger a buzzer when the light intensity goes beyond a particular threshold. Below is a simple code in C for this purpose:
+
+
+
+#include <pic.h>
+#include <stdint.h>
+
+// Configuration bits
+#pragma config FOSC = HS   // High-speed oscillator (HS oscillator)
+#pragma config WDTE = OFF  // Watchdog Timer disabled
+#pragma config PWRTE = OFF // Power-up Timer disabled
+#pragma config BOREN = ON  // Brown-out Reset enabled
+#pragma config LVP = OFF   // Low-voltage programming disabled
+
+#define _XTAL_FREQ 8000000 // Crystal frequency (8 MHz)
+
+// Function to initialize ADC
+void ADC_Init() {
+    ADCON0 = 0b00000001; // ADC Channel 0, ADC enabled
+    ADCON1 = 0b00000000; // Reference voltage: VDD and VSS
+}
+
+// Function to read ADC value
+uint16_t ADC_Read(uint8_t channel) {
+    ADCON0 &= 0b11000101;      // Clear the channel selection bits
+    ADCON0 |= (channel << 3); // Set the channel selection bits
+    __delay_ms(5);             // Wait for the channel to settle
+    GO_nDONE = 1;              // Start the conversion
+    while (GO_nDONE);          // Wait for the conversion to complete
+    return ((ADRESH << 8) + ADRESL); // Return the ADC result
+}
+
+void main() {
+    TRISB0 = 0; // Buzzer pin as output
+    TRISA0 = 1; // Analog input (LDR) pin as input
+
+    ADC_Init(); // Initialize ADC module
+
+    while (1) {
+        uint16_t lightIntensity = ADC_Read(0); // Read ADC value from channel 0
+
+        // Check if light intensity is above a threshold (adjust as needed)
+        if (lightIntensity > 500) {
+            RB0 = 1; // Turn on the buzzer
+        } else {
+            RB0 = 0; // Turn off the buzzer
+        }
+    }
+}
+ex 8
+
+https://filetransfer.io/data-package/t31lBHWm#link
+
+ex7 
+https://filetransfer.io/data-package/gtUeLfr1#link
+
+
+/*
+* EXAMPLE_5.C
+*
+* This program is basically identical to Switches.asm of Cswitches.c but uses
+* tasks that communicate through a mailbox.
+*
+* Task #1 checks the switches at 1 second intervals. When the state of one or more
+* switches has changed, a message is posted  to task #2. This task displays the message,
+* that is the state of the switches, on the LED display.
+*
+*/
+
+#include <ucos_ii.h>
+
+#define STACKSIZE 256
+
+/* Mailbox between switches and LED display */
+OS_EVENT *Mailbox;
+
+/* Stacks */
+OS_STK SwitchReadStack[STACKSIZE];
+OS_STK LedsWriteStack[STACKSIZE];
+
+/* Pointers to I/O devices */
+INT8U *const Switch = (INT8U *)0xE001;
+INT8U *const LEDS = (INT8U *)0xE003;
+INT8U *const SOUND = (INT8U *)0xE031;
+/* Prototypes */
+void SimInit(void);
+void SwitchRead(void *);
+void LedsWrite(void *);
+
+void main(void)
+{
+    SimInit();
+    OSInit();
+    Mailbox = OSMboxCreate(OS_NULL);
+    OSTaskCreate(SwitchRead, OS_NULL, &SwitchReadStack[STACKSIZE], 10);
+    OSTaskCreate(LedsWrite, OS_NULL, &LedsWriteStack[STACKSIZE], 11);
+    OSStart();
+}
+
+void SimInit()
+{
+    _trap(15);        /* Show Switches window */
+    _word(31);
+    _trap(15);        /* Show LEDs window */
+    _word(32);
+}
+
+void SwitchRead(void *pdata)
+{
+    INT8U SwitchState = 0;
+
+    for (;;) {
+       if (SwitchState != *Switch) {
+           SwitchState = *Switch;
+           OSMboxPost(Mailbox, &SwitchState);
+       }
+       OSTimeDlyHMSM(0, 0, 1, 0);
+    }
+}
+
+void LedsWrite(void *pdata)
+{
+    INT8U *msg;
+    INT8U err;
+
+    for (;;) {
+       msg = (INT8U *) OSMboxPend(Mailbox, 0, &err);
+       if(*msg==0){
+        *SOUND=0x01;*LEDS=0x444;}
+       else{
+        *SOUND = 0x00;*LEDS=*msg;}
+    }
+}
+Ex: 10 odd emb
+Write a RTOS program to simulate the upcounter (0 – 255) and display the value in  seven segment displays.
+Write a RTOS program to simulate the downcounter (100 – 0) and display the value in  LEDs.
+
+Ex11
+Write a RTOS program consisting of two tasks, where task 1 should read the status of a single switch if it is the ON it should send a message “ON” to task2, on receipt of this message task2 should raise an alarm. The communication should be done using message queues.
+Write a RTOS program consists of two tasks, where task 1 should read the status of eight switches and it should send a message consisting of the decimal equivalent of switch state to task2, on receipt of this message task2 should display the result in a seven segment display. The communication should be done using mail boxes.
+
+
+
+
+/*
+* EXAMPLE_5.C
+*
+* This program is basically identical to Switches.asm of Cswitches.c but uses
+* tasks that communicate through a mailbox.
+*
+* Task #1 checks the switches at 1 second intervals. When the state of one or more
+* switches has changed, a message is posted  to task #2. This task displays the message,
+* that is the state of the switches, on the LED display.
+*
+*/
+
+#include <ucos_ii.h>
+
+#define STACKSIZE 256
+
+/* Mailbox between switches and LED display */
+OS_EVENT *Mailbox;
+
+/* Stacks */
+OS_STK SwitchReadStack[STACKSIZE];
+OS_STK SoundWriteStack[STACKSIZE];
+
+/* Pointers to I/O devices */
+INT8U *const Switch = (INT8U *)0xE001;
+INT8U *const SOUND = (INT8U *)0xE031;
+/* Prototypes */
+void SimInit(void);
+void SwitchRead(void *);
+void SoundWrite(void *);
+
+void main(void)
+{
+    SimInit();
+    OSInit();
+    Mailbox = OSMboxCreate(OS_NULL);
+    OSTaskCreate(SwitchRead, OS_NULL, &SwitchReadStack[STACKSIZE], 10);
+    OSTaskCreate(SoundWrite, OS_NULL, &SoundWriteStack[STACKSIZE], 11);
+    OSStart();
+}
+
+void SimInit()
+{
+    _trap(15);        /* Show Switches window */
+    _word(31);
+}
+
+void SwitchRead(void *pdata)
+{
+    INT8U SwitchState = 0;
+    for (;;) {
+       if (SwitchState != *Switch) {
+           SwitchState = *Switch;
+           printf("%d",SwitchState);
+           if(SwitchState)
+            OSMboxPost(Mailbox, &SwitchState);
+       }
+       OSTimeDlyHMSM(0, 0, 1, 0);
+    }
+}
+
+void SoundWrite(void *pdata)
+{
+    INT8U *msg;
+    INT8U err;
+
+    for (;;) {
+       msg = (INT8U *) OSMboxPend(Mailbox, 0, &err);
+       if(*msg!=0x01){
+        printf("OFF\n");
+        }
+       else{
+        *SOUND = 0x01;
+        printf("ON\n");
+        }
+    }
+}ex 7 q2 
+
+#include<pic.h>
+void delay(int time)
+{
+	unsigned int i;
+	unsigned char j;
+	for(i=0;i<time;i++)
+	for(j=0;j<165;j++)
+}
+void main()
+{
+	int i;
+	TRISB=0x00;
+	while(1)
+	{
+		PORTB=0x66;
+		delay(100);
+		PORTB=0xCC;
+		delay(100);
+		PORTB=0x99;
+		delay(100);
+		PORTB=0x33;
+		delay(100);
+		for(i=0;i<2;i++)
+		{
+			
+		PORTB=0x66;
+		delay(100);
+		PORTB=0x33;
+		delay(100);
+		PORTB=0x99;
+		delay(100);
+		PORTB=0xCC;
+		delay(100);
+		}
+	}
+}7_1
+
+#include<pic.h>
+#define SW RB0
+#define ENABLE RD0
+#define MTR_1 RD1
+#define MTR_2 RD2
+void delay(int time){
+        for(int i=0;i<time;i++){
+                for(int j=0;j<165;j++);
+        }
+}
+void main(){
+        TRISB0=1;
+        TRISD=0x00;
+        PORTD=0x00;
+        SW=1;
+        while(1){
+                ENABLE=1;
+                if(SW==1){
+                        MTR_1=0;
+                        delay(25);
+                        MTR_2=1;
+                        delay(75);
+                }
+                else{
+                        MTR_1=1;
+                        delay(50);
+                        MTR_2=0;
+                        delay(50);
+                }
+        }
+}
+
+
+
+7_2
+
+
+#include<pic.h>
+void delay(int time){
+        for(int i=0;i<time;i++){
+                for(int j=0;j<165;j++);
+        }
+}
+void main(){
+        TRISD=0x80;
+        TRISB=0x00;
+        PORTB=0x00;
+        int i=0;
+        while(1){
+                if(i%3==0){
+                RB0=1;
+                RB3=0;
+                delay(100);
+                RB2=1;
+                RB0=0;
+                delay(100);
+                RB1=1;
+                RB2=0;
+                delay(100);
+                RB3=1;
+                RB1=0;
+                delay(100);
+                RB0=1;
+                RB3=0;
+                delay(100);
+                }
+                else{
+                RB0=0;
+                RB3=1;
+                delay(100);
+                RB1=1;
+                RB3=0;
+                delay(100);
+                RB2=1;
+                RB1=0;
+                delay(100);
+                RB0=1;
+                RB2=0;
+                delay(100);
+                }
+                i+=1;
+        }
+}
+
+
+
+
+7_3
+
+
+#include<pic.h>
+void delay(int time){
+        for(int i=0;i<time;i++){
+                for(int j=0;j<165;j++);
+        }
+}
+void main(){
+        TRISD=0x80;
+        TRISB=0x00;
+        PORTB=0x00;
+        TRISC0=1;
+        int t=100;
+        TRISC1=1;
+        while(1){
+                if(RC1==1)
+                        t=20;
+                else
+                        t=10;
+                if(RC0==1){
+                RB0=1;
+                RB3=0;
+                delay(t);
+                RB2=1;
+                RB0=0;
+                delay(t);
+                RB1=1;
+                RB2=0;
+                delay(t);
+                RB3=1;
+                RB1=0;
+                delay(t);
+                RB0=1;
+                RB3=0;
+                delay(t);
+                }
+                else{
+                RB0=0;
+                RB3=1;
+                delay(t);
+                RB1=1;
+                RB3=0;
+                delay(t);
+                RB2=1;
+                RB1=0;
+                delay(t);
+                RB0=1;
+                RB2=0;
+                delay(t);
+                }
+        }
+}//7_2
+
+#include<pic.h>
+void delay(int time){
+	for(int i=0;i<time;i++){
+		for(int j=0;j<165;j++);
+	}
+}
+void main(){
+	TRISD=0x80;
+	TRISB=0x00;
+	PORTB=0x00;
+	int i=0;
+	while(1){
+		if(i%3==0){
+		RB0=1;
+		RB3=0;
+		delay(100);
+		RB2=1;
+		RB0=0;
+		delay(100);
+		RB1=1;
+		RB2=0;
+		delay(100);
+		RB3=1;
+		RB1=0;
+		delay(100);
+		RB0=1;
+		RB3=0;
+		delay(100);
+		}
+		else{
+		RB0=0;
+		RB3=1;
+		delay(100);
+		RB1=1;
+		RB3=0;
+		delay(100);
+		RB2=1;
+		RB1=0;
+		delay(100);
+		RB0=1;
+		RB2=0;
+		delay(100);
+		}
+		i+=1;
+	}
+}embed 7ex
+
+
+#include<pic.h>
+#define SW RB0
+#define ENABLE RD0
+#define MTR_1 RD1
+#define MTR_2 RD2
+void delay(int time){
+	for(int i=0;i<time;i++){
+		for(int j=0;j<165;j++);
+	}
+}
+void main(){
+	TRISB0=1;
+	TRISD=0x00;
+	PORTD=0x00;
+	SW=1;
+	while(1){
+		ENABLE=1;
+		if(SW==1){
+			MTR_1=0;
+			delay(25);
+			MTR_2=1;
+			delay(75);
+		}
+		else{
+			MTR_1=1;
+			delay(50);
+			MTR_2=0;
+			delay(50);
+		}
+	}
+}
+
+
+#include<pic.h>
+void delay(int time){
+	for(int i=0;i<time;i++){
+		for(int j=0;j<165;j++);
+	}
+}
+void main(){
+	TRISD=0x80;
+	TRISB=0x00;
+	PORTB=0x00;
+	int i=0;
+	while(1){
+		if(i%3==0){
+		RB0=1;
+		RB3=0;
+		delay(100);
+		RB2=1;
+		RB0=0;
+		delay(100);
+		RB1=1;
+		RB2=0;
+		delay(100);
+		RB3=1;
+		RB1=0;
+		delay(100);
+		RB0=1;
+		RB3=0;
+		delay(100);
+		}
+		else{
+		RB0=0;
+		RB3=1;
+		delay(100);
+		RB1=1;
+		RB3=0;
+		delay(100);
+		RB2=1;
+		RB1=0;
+		delay(100);
+		RB0=1;
+		RB2=0;
+		delay(100);
+		}
+		i+=1;
+	}
+}
+
+
+#include<pic.h>
+void delay(int time){
+	for(int i=0;i<time;i++){
+		for(int j=0;j<165;j++);
+	}
+}
+void main(){
+	TRISD=0x80;
+	TRISB=0x00;
+	PORTB=0x00;
+	TRISC0=1;
+	int t=100;
+	TRISC1=1;
+	while(1){
+		if(RC1==1)
+			t=20;
+		else
+			t=10;
+		if(RC0==1){
+		RB0=1;
+		RB3=0;
+		delay(t);
+		RB2=1;
+		RB0=0;
+		delay(t);
+		RB1=1;
+		RB2=0;
+		delay(t);
+		RB3=1;
+		RB1=0;
+		delay(t);
+		RB0=1;
+		RB3=0;
+		delay(t);
+		}
+		else{
+		RB0=0;
+		RB3=1;
+		delay(t);
+		RB1=1;
+		RB3=0;
+		delay(t);
+		RB2=1;
+		RB1=0;
+		delay(t);
+		RB0=1;
+		RB2=0;
+		delay(t);
+		}
+	}
+}
+
+
+
+/////////////////////////////////
+
+sensor interfacing/////////////////////
+[6:30 PM, 11/1/2023] Santhosh Pandi: //Exercise 9 - Sensor Interfacing
+
+1.Ultrasonic sensor
+
+float duration_us, distance_cm;
+
+void setup() {
+  Serial.begin (9600);       
+  pinMode(6, OUTPUT); 
+  pinMode(7, INPUT);  
+  pinMode(3, OUTPUT); 
+}
+
+void loop() {
+  digitalWrite(6, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(6, LOW);
+
+  duration_us = pulseIn(7, HIGH);
+  distance_cm = 0.017 * duration_us;
+
+  if(distance_cm < 50)
+  {
+    digitalWrite(3, HIGH);
+    Serial.print("Object detected at  ");
+    Serial.print(distance_cm);
+    Serial.println(" cm");
+  }
+  else
+    digitalWrite(3, LOW); 
+
+    
+
+   delay(500);
+}
+[6:30 PM, 11/1/2023] Santhosh Pandi: //Infrared Sensor 
+
+int SensorPin = 2;
+int OutputPin = 13;
+
+void setup() {
+  pinMode(OutputPin, OUTPUT);
+  pinMode(SensorPin, INPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  int SensorValue = digitalRead(SensorPin);
+  
+  Serial.print("SensorPin Value: ");
+  Serial.println(SensorValue);
+  delay(1000);
+   if (SensorValue==LOW){ // LOW MEANS Object Detected
+    digitalWrite(OutputPin, HIGH);
+  }
+  else
+  {
+    digitalWrite(OutputPin, LOW); 
+  }
+}
+[6:30 PM, 11/1/2023] Santhosh Pandi: //soil moisture sensor                                                                                                                const int sensor_pin = A1;	
+
+void setup() {
+  Serial.begin(9600);	
+}
+
+void loop() {
+  float moisture_percentage;
+  int sensor_analog;
+  sensor_analog = analogRead(sensor_pin);
+  moisture_percentage = ( 100 - ( (sensor_analog/1023.00) * 100 ) );
+  Serial.print("Moisture Percentage = ");
+  Serial.print(moisture_percentage);
+  Serial.print("%\n\n");
+  delay(1000);
+}
+[6:30 PM, 11/1/2023] Santhosh Pandi: //Dhtt sensor                                                                                         #include <dht11.h>
+#define DHT11PIN 4
+
+dht11 DHT11;
+
+void  setup()
+{
+  Serial.begin(9600);
+ 
+}
+
+void loop()
+{
+  Serial.println();
+
+  int chk = DHT11.read(DHT11PIN);
+
+  Serial.print("Humidity (%): ");
+  Serial.println((float)DHT11.humidity, 2);
+
+  Serial.print("Temperature  (C): ");
+  Serial.println((float)DHT11.temperature, 2);
+  delay(2000);
+
+}
+[6:30 PM, 11/1/2023] Santhosh Pandi: //Sound sensor                                                                                                                                 int sound_sensor = A2; //assign to pin A2
+void setup() 
+	
+{
+	
+  Serial.begin(9600); //begin Serial Communication
+	
+}
+	
+ 
+	
+void loop()
+	
+{
+	
+  int soundValue = 0; //create variable to store many different readings
+	
+  for (int i = 0; i < 32; i++) //create a for loop to read 
+	
+  { soundValue += analogRead(sound_sensor);  } //read the sound sensor
+	
+ 
+	
+  soundValue >>= 5; //bitshift operation 
+	
+  Serial.println(soundValue); //print the value of sound sensor
+	
+ 
+	
+ 
+	
+//if a value higher than 500 is registered, we will print the following
+	
+//this is done so that we can clearly see if the threshold is met
+	
+  if (soundValue > 500) { 
+	
+    Serial.println("         ||        ");
+	
+    Serial.println("       ||||||      ");
+	
+    Serial.println("     |||||||||     ");
+	
+    Serial.println("   |||||||||||||   ");
+	
+    Serial.println(" ||||||||||||||||| ");
+	
+    Serial.println("   |||||||||||||   ");
+	
+    Serial.println("     |||||||||     ");
+	
+    Serial.println("       ||||||      ");
+	
+    Serial.println("         ||        ");
+	
+  }
+	
+  delay(50); //a shorter delay between readings
+	
+}
+
+
+
+////////////////////////////////////
+
+
+
+////////////////ex10 and ex11////////////////////////////
+EX_10 11 odd
+
+Ex: 10
+
+Write a RTOS program to simulate the upcounter (0 – 255) and display the value in  seven segment displays.
+Write a RTOS program to simulate the downcounter (100 – 0) and display the value in  LEDs.
+
+10_1
+
+#include <ucos_ii.h>
+
+#define STACKSIZE    256
+
+/* Pointers to I/O devices */
+INT8U *const Leds = (INT8U *)0xE003;
+INT16U *const Seg7Display = (INT16U *)0xE010;
+
+/* bit pattern for 7 segment display 0 - 9  */
+INT16U const bitpat[] = { 0x3F, 0x06, 0x5B, 0x4F, 0x66, 0x6D, 0x7D, 0x07, 0x7F, 0x6F };
+    
+
+/* Stacks  */
+OS_STK DisplayWriteStack[STACKSIZE];
+/* Prototypes */
+void SimInit(void);
+void DisplayWrite(void *);
+void Seg7Init(void);
+void Seg7Write(INT16U, INT32U);
+
+void main(void)
+{
+    SimInit();
+    OSInit();
+    OSTaskCreate(DisplayWrite, OS_NULL, &DisplayWriteStack[STACKSIZE], 11);
+    OSStart();
+}
+
+void SimInit()
+{
+    _trap(15);        /* Show LEDs window */
+    _word(32);
+    _trap(15);        /* Show 7-segments window */
+    _word(35);
+}
+
+void DisplayWrite(void *pdata)
+{
+    INT8U *msg;
+    INT8U err
+    
+    INT32U i=0,j=100;
+    Seg7Init();
+    for (;;) {
+       Seg7Write(3, i);
+       i=(i+1)%256;
+       *Leds = j;
+        OSTimeDlyHMSM(0, 0, 0, 900);
+        j-=1;
+        if(j==-1)
+            j=100;
+    }
+}
+
+
+void Seg7Init(void)
+{
+    Seg7Display[0] = 0x00;                           // digits 0 - 2 are blank
+    Seg7Display[1] = 0x00;
+    Seg7Display[2] = 0x00;
+    Seg7Display[3] = bitpat[0];                      // last digit (3) is '0'
+}
+
+void Seg7Write(INT16U segnr, INT32U n,)
+{
+    INT8U i;
+
+    for (i = 0; i <= 3; i++) Seg7Display[i] = 0x00;  // clear all digits
+    if (n > 9) Seg7Write(segnr - 1, n / 10);         // call recursively for next digit
+    Seg7Display[segnr] = bitpat[n % 10];             // write new bit pattern
+}
+
+
+Ex11
+Write a RTOS program consisting of two tasks, where task 1 should read the status of a single switch if it is the ON it should send a message “ON” to task2, on receipt of this message task2 should raise an alarm. The communication should be done using message queues.
+
+Write a RTOS program consists of two tasks, where task 1 should read the status of eight switches and it should send a message consisting of the decimal equivalent of switch state to task2, on receipt of this message task2 should display the result in a seven segment display. The communication should be done using mail boxes.
+
+
+EX_11_1
+
+#include <ucos_ii.h>
+
+#define STACKSIZE 256
+
+/* Message queue between switches and LED display */
+OS_Q *MsgQueue;
+
+/* Stacks */
+OS_STK SwitchReadStack[STACKSIZE];
+OS_STK SoundWriteStack[STACKSIZE];
+
+/* Pointers to I/O devices */
+INT8U *const Switch = (INT8U *)0xE001;
+INT8U *const SOUND = (INT8U *)0xE031;
+
+/* Prototypes */
+void SimInit(void);
+void SwitchRead(void *);
+void SoundWrite(void *);
+
+void main(void)
+{
+    SimInit();
+    OSInit();
+    MsgQueue = OSQCreate(&MsgQueue, 1);
+    OSTaskCreate(SwitchRead, OS_NULL, &SwitchReadStack[STACKSIZE], 10);
+    OSTaskCreate(SoundWrite, OS_NULL, &SoundWriteStack[STACKSIZE], 11);
+    OSStart();
+}
+
+void SimInit()
+{
+    _trap(15);        /* Show Switches window */
+    _word(31);
+}
+
+void SwitchRead(void *pdata)
+{
+    INT8U SwitchState = 0;
+    char a='ON',b='OFF';
+    for (;;) {
+       if (SwitchState != *Switch) {
+           SwitchState = *Switch;
+           if(SwitchState==1)
+            OSQPost(MsgQueue, a);
+           else
+            OSQPost(MsgQueue, b);
+       }
+       OSTimeDlyHMSM(0, 0, 1, 0);
+    }
+}
+
+void SoundWrite(void *pdata)
+{
+    char *a;
+    INT8U err;
+
+    for (;;) {
+       a = (char *)OSQPend(MsgQueue, 0, &err);
+       if(a!='N'){
+        printf("Alarm is OFF\n");
+        }
+       else{
+        *SOUND = 0x00;
+        printf("Alarm is ON\n");
+        }
+    }
+}
+
+
+EX_11_2
+
+#include <ucos_ii.h>
+
+#define STACKSIZE 256
+
+/* Mailbox between switches and LED display */
+OS_EVENT *Mailbox;
+
+/* Stacks */
+OS_STK SwitchReadStack[STACKSIZE];
+OS_STK DisplayWriteStack[STACKSIZE];
+
+/* Pointers to I/O devices */
+INT8U *const Switch = (INT8U *)0xE001;
+INT16U *const Seg7Display = (INT16U *)0xE010;
+
+/* bit pattern for 7 segment display 0 - 9  */
+INT16U const bitpat[] = { 0x3F, 0x06, 0x5B, 0x4F, 0x66, 0x6D, 0x7D, 0x07, 0x7F, 0x6F };
+
+/* Prototypes */
+void SimInit(void);
+void SwitchRead(void *);
+void SegWrite(void *);
+void Seg7Init(void);
+void Seg7Write(INT16U, INT32U);
+
+void main(void)
+{
+    SimInit();
+    OSInit();
+    Mailbox = OSMboxCreate(OS_NULL);
+    OSTaskCreate(SwitchRead, OS_NULL, &SwitchReadStack[STACKSIZE], 10);
+    OSTaskCreate(SegWrite, OS_NULL, &DisplayWriteStack[STACKSIZE], 12);
+    OSStart();
+}
+
+void SimInit()
+{
+    _trap(15);        /* Show Switches window */
+    _word(31);
+    _trap(15);        /* Show 7-segments window */
+    _word(35);
+}
+
+void SwitchRead(void *pdata)
+{
+    INT8U SwitchState = 0;
+
+    for (;;) {
+       if (SwitchState != *Switch) {
+           SwitchState = *Switch;
+           OSMboxPost(Mailbox, &SwitchState);
+       }
+       OSTimeDlyHMSM(0, 0, 1, 0);
+    }
+}
+
+void SegWrite(void *pdata)
+{
+    INT8U *msg;
+    INT8U err;
+
+    for (;;) {
+       msg = (INT8U *) OSMboxPend(Mailbox, 0, &err);
+       Seg7Write(3, (INT32U) *msg);
+    }
+}
+void Seg7Init(void)
+{
+    Seg7Display[0] = 0x00;                           // digits 0 - 2 are blank
+    Seg7Display[1] = 0x00;
+    Seg7Display[2] = 0x00;
+    Seg7Display[3] = bitpat[0];                      // last digit (3) is '0'
+}
+
+void Seg7Write(INT16U segnr, INT32U n,)
+{
+    INT8U i;
+
+    for (i = 0; i <= 3; i++) Seg7Display[i] = 0x00;  // clear all digits
+    if (n > 9) Seg7Write(segnr - 1, n / 10);         // call recursively for next digit
+    Seg7Display[segnr] = bitpat[n % 10];             // write new bit pattern
+}
